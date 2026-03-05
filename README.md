@@ -39,7 +39,10 @@ Bot Telegram untuk memantau status OLT VSOL GPON 1 PON (V1600GS) secara real-tim
    ```
    Edit file `.env`:
    - `BOT_TOKEN`: Token bot Telegram Anda.
-   - `ADMIN_CHAT_ID`: ID Telegram Anda untuk menerima alert.
+   - `ADMIN_CHAT_ID`: ID Telegram Anda.
+   - `OLT_IP`: Alamat IP OLT VSOL Anda.
+   - `OLT_COMMUNITY`: SNMP Community string (biasanya `public`).
+   - `CHECK_INTERVAL`: Interval pengecekan (detik).
 
 ## 🚀 Cara Menjalankan
 

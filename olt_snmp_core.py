@@ -5,7 +5,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 class OLTCore:
-    def __init__(self, ip='10.10.0.200', community='public'):
+    def __init__(self, ip, community):
         self.ip = ip
         self.community = community
         self.status_map = {

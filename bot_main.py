@@ -23,9 +23,20 @@ logger = logging.getLogger(__name__)
 # 1. KONFIGURASI — Baca dari file .env
 # ==========================================
 load_dotenv()
+
+# Telegram Config
 BOT_TOKEN      = os.getenv('BOT_TOKEN')
 ADMIN_CHAT_ID  = int(os.getenv('ADMIN_CHAT_ID'))
-CHECK_INTERVAL = int(os.getenv('CHECK_INTERVAL', 60))   # default 60 detik
+
+# OLT Config
+OLT_IP         = os.getenv('OLT_IP', '10.10.0.200')
+OLT_COMMUNITY  = os.getenv('OLT_COMMUNITY', 'public')
+
+# Interval & Logic Config
+CHECK_INTERVAL     = int(os.getenv('CHECK_INTERVAL', 60))
+OLT_DOWN_THRESHOLD = int(os.getenv('OLT_DOWN_THRESHOLD', 2))
+COOLDOWN_SECONDS   = int(os.getenv('COOLDOWN_SECONDS', 5))
+
 STATE_FILE     = os.path.join(os.path.dirname(__file__), 'onu_states.json')
 
 if not BOT_TOKEN or not ADMIN_CHAT_ID:
@@ -33,7 +44,7 @@ if not BOT_TOKEN or not ADMIN_CHAT_ID:
 
 # Inisialisasi Bot dan Engine
 bot = telebot.TeleBot(BOT_TOKEN)
-olt = OLTCore()
+olt = OLTCore(ip=OLT_IP, community=OLT_COMMUNITY)
 
 # ==========================================
 # 2. STATE MANAGEMENT (Persist ke Disk)
@@ -67,7 +78,6 @@ alert_enabled = True
 # 4. RATE LIMITING
 # ==========================================
 last_command_time: dict = {}
-COOLDOWN_SECONDS = 5
 
 def is_rate_limited(chat_id: int) -> bool:
     """Cegah spam command — cooldown 5 detik per user."""
@@ -229,7 +239,7 @@ def check_onu_by_id(message):
 # ==========================================
 
 # Berapa kali SNMP gagal berturut-turut sebelum dianggap OLT down
-OLT_DOWN_THRESHOLD = 2
+# OLT_DOWN_THRESHOLD diambil dari .env di bati atas
 
 # Durasi stabilization window setelah OLT/jaringan pulih (detik).
 # Selama window ini bot TIDAK kirim notif — beri waktu ONU naik kembali.
